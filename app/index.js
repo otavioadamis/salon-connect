@@ -13,6 +13,8 @@ const Home = () => {
         <Link href="/criar-reserva" className='font-bold'>Cria reserva</Link>
         <Link href="/home" className='font-bold'>Homepage</Link>
         <Link href="/calendario" className='font-bold'>calendario</Link>
+        <Link href="/promocao-page" className='font-bold'>Pagina de Promoção</Link>
+
       </View>
     </SafeAreaView>
   )
