@@ -9,7 +9,7 @@ const Login = () => {
             <Text style={styles.title}>Login</Text>
             
             <Image 
-              source={{ uri: '../../assets/BarberConnect.png' }}      
+              source={{ uri: "../../assets/BarberConnect.png" }}      
               style={styles.logo}
             />
     
