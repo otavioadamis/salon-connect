@@ -61,6 +61,22 @@ const TabsLayout = () => {
             )
           }}
         />
+
+        <Tabs.Screen
+          name="promocao-page"
+          options={{
+            title: 'promocao-page',
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.Announce}
+                color={color}
+                focused={focused}
+                name='Promoções'
+              />
+            )
+          }}
+        />
       </Tabs>
     </>
   )

@@ -56,7 +56,6 @@ const Disponibilidade = () => {
             ))
           )}
         </View>
-
         <View style={styles.buttonContainer}>
           <Button title="Salvar" onPress={salvarAlteracoes} color="#f0ad4e" />
         </View>
