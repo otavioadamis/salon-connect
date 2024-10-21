@@ -10,7 +10,7 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.get('http://10.0.2.2:3001/Usuario', { 
+            const response = await axios.get('http://10.0.0.170:3000/Usuario', { 
                 params: { email, senha }
             });
             
@@ -22,9 +22,9 @@ const Login = () => {
                 if (usuario.tipo === 'Cliente') {
                     router.push('/home');
                 } else if (usuario.tipo === 'Funcionario') {
-                    router.push('/PaginaSalao');
+                    router.push('/admin/PaginaSalao');
                 } else if (usuario.tipo === 'Admin') {
-                    router.push('/PaginaSalao');
+                    router.push('/admin/PaginaSalao');
                 }
             } else {
                 Alert.alert('Erro de login', 'Email ou senha incorretos');
