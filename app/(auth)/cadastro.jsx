@@ -2,27 +2,56 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 
-export default function Cadastro({ navigation }) {
+export default function Cadastro() {
+  const userService = new UserService();
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [contato, setContato] = useState('');
+  const [error, setError] = useState(null);
+
+  const handleCadastro = async () => {
+    const signupRequest = {
+      nome: nome.trim(),
+      email: email.trim(),
+      senha: senha.trim(),
+      contato: contato.trim()
+    };
+    if (!signupRequest.nome || !signupRequest.email || !signupRequest.senha || !signupRequest.contato) {
+      return setError('Campo(s) obrigatório(s) faltando.');
+    } else {
+      setError(null);
+    }
+    try {
+      const signupResponse = await userService.signup(signupRequest);
+      if (signupResponse) {
+        const { usuario } = signupResponse;
+        Alert.alert('Cadastro feito com sucesso', `Bem vindo ao Barber Connect, ${usuario.nome}`);
+        router.push('/home');
+      } else {
+        Alert.alert('Erro no cadastro', 'Verifique os dados e tente novamente.');
+      }
+    } catch (error) {
+      Alert.alert('Erro ao fazer cadastro', error.message || 'Algo inesperado aconteceu.');
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.signupBox}>
         <Image 
           source={{ uri: '../../assets/BarberConnect.png' }} 
           style={styles.logo} 
-        />
-        
+        /> 
         <Text style={styles.title}>Cadastro</Text>
-
-        <TextInput style={styles.input} placeholder="Nome" />
-        <TextInput style={styles.input} placeholder="Email" />
-        <TextInput style={styles.input} placeholder="Senha" secureTextEntry />
+        <TextInput style={styles.input} placeholder="Nome" onChangeText={setNome} value={nome} />
+        <TextInput style={styles.input} placeholder="Email" onChangeText={setEmail} value={email} />
+        <TextInput style={styles.input} placeholder="Senha" secureTextEntry onChangeText={setSenha} value={senha} />
         <TextInput style={styles.input} placeholder="Confirme sua senha" secureTextEntry />
-        <TextInput style={styles.input} placeholder="Telefone" />
-
-        <TouchableOpacity style={styles.signupButton}>
+        <TextInput style={styles.input} placeholder="Contato" onChangeText={setContato} value={contato} keyboardType='numeric' />
+        {error && <Text style={{ color: 'red' }}>{error}</Text>}
+        <TouchableOpacity style={styles.signupButton} onPress={() => handleCadastro()}>
           <Text style={styles.signupButtonText}>Cadastra-se</Text>
         </TouchableOpacity>
-
         <TouchableOpacity onPress={() => router.navigate('login')}>
           <Text style={styles.loginText}>Voltar para Login</Text>
         </TouchableOpacity>
