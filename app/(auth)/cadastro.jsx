@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
+import { UserService } from '../../services/api/UserService';
 
 export default function Cadastro() {
   const userService = new UserService();
