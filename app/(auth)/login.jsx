@@ -1,33 +1,37 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
-import axios from 'axios';
-import { useRouter } from 'expo-router'; 
+import { useRouter } from 'expo-router';
+import { UserService } from '../../services/api/UserService';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [error, setError] = useState(null);
     const router = useRouter();
+    const userService = new UserService();
 
     const handleLogin = async () => {
+        const loginRequest = { email: email.trim(), senha: senha.trim() };
+        if (!loginRequest.email || !loginRequest.senha) {
+            return setError('Campo(s) obrigatório(s) faltando.');
+        } else {
+            setError(null);
+        }
         try {
-            const response = await axios.get('http://10.0.0.170:3000/Usuario', { 
-                params: { email, senha }
-            });
-            
-            const usuario = response.data.find(user => user.email === email && user.senha === senha);
-            
-            if (usuario) {
+            const loginResponse = await userService.login(loginRequest);
+            if (loginResponse) {
+                const { usuario } = loginResponse;
                 Alert.alert('Login bem-sucedido', `Bem-vindo, ${usuario.nome}`);
-                
-                if (usuario.tipo === 'Cliente') {
+                if (usuario.tipo === 'ROLE_CLIENTE') {
                     router.push('/home');
-                } else if (usuario.tipo === 'Funcionario') {
+                } else if (usuario.tipo === 'ROLE_FUNCIONARIO') {
                     router.push('/admin/PaginaSalao');
-                } else if (usuario.tipo === 'Admin') {
+                } else if (usuario.tipo === 'ROLE_ADMIN') {
                     router.push('/admin/PaginaSalao');
                 }
-            } else {
-                Alert.alert('Erro de login', 'Email ou senha incorretos');
+                else {
+                    Alert.alert('Erro de login', 'Email ou senha incorretos');
+                }
             }
         } catch (error) {
             console.error('Erro ao fazer login:', error);
@@ -40,34 +44,30 @@ const Login = () => {
             <View style={styles.container}>
                 <View style={styles.loginBox}>
                     <Text style={styles.title}>Login</Text>
-                    
-                    <Image 
-                        source={require('../../assets/logo.png')} 
+                    <Image
+                        source={require('../../assets/logo.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />
-
                     <Text style={styles.label}>Email</Text>
-                    <TextInput 
-                        style={styles.input} 
+                    <TextInput
+                        style={styles.input}
                         placeholder="Digite seu email"
                         value={email}
                         onChangeText={setEmail}
                     />
-
                     <Text style={styles.label}>Senha</Text>
-                    <TextInput 
-                        style={styles.input} 
-                        placeholder="Digite sua senha" 
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Digite sua senha"
                         secureTextEntry
                         value={senha}
                         onChangeText={setSenha}
                     />
-
                     <TouchableOpacity style={styles.forgotPassword}>
                         <Text style={styles.forgotText}>Esqueci Senha</Text>
                     </TouchableOpacity>
-
+                    {error && <Text style={{ color: 'red' }}>{error}</Text>}
                     <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                         <Text style={styles.loginButtonText}>Login</Text>
                     </TouchableOpacity>
@@ -80,7 +80,7 @@ const Login = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#fff', 
+        backgroundColor: '#fff',
     },
     container: {
         flex: 1,

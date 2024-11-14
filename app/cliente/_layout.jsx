@@ -6,6 +6,7 @@ const ClienteLayout = () => {
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name='criar-reserva' options={{ headerShown: false }}/>
             <Stack.Screen name='CanselamentoHorario' options={{headerShown: false}}/>
+            <Stack.Screen name='agendar-servico' options={{headerShown: false}}/>
         </Stack>
     )
 }
