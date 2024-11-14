@@ -4,13 +4,14 @@ import { Calendar } from 'react-native-calendars';
 import axios from 'axios';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { localMachineIp } from '../../services/AxiosInstance'; 
 
 const CriarReserva = () => {
   const [profissionais, setProfissionais] = useState([]);
   const [dataSelecionada, setDataSelecionada] = useState(null);
 
   useEffect(() => {
-    axios.get('http://10.0.0.170:3000/funcionarios')
+    axios.get(`http://${localMachineIp}:3000/funcionarios`)
       .then((response) => {
         setProfissionais(response.data);
       })
@@ -22,7 +23,7 @@ const CriarReserva = () => {
   const selecionarData = (dia) => {
     setDataSelecionada(dia);
 
-    axios.get('http://10.0.0.170:3000/funcionarios')
+    axios.get(`http://${localMachineIp}:3000/funcionarios`)
       .then((response) => {
         const profissionaisDisponiveis = response.data.filter(profissional =>
           profissional.horarios.some(horario => horario.dia === dia)
@@ -102,4 +103,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
 export default CriarReserva;

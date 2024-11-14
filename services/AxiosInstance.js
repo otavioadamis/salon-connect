@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const localMachineIp = "";
+export const localMachineIp = ""; 
+
 
 const axiosInstance = axios.create({
     baseURL: `http://${localMachineIp}:8080/api/`,

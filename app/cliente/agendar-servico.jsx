@@ -3,6 +3,7 @@ import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity } from 'reac
 import axios from 'axios';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { localMachineIp } from '../../services/AxiosInstance'; 
 
 const AgendarServico = () => {
   const searchParams = useLocalSearchParams();
@@ -15,13 +16,13 @@ const AgendarServico = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const funcionarioResponse = await axios.get(`http:///10.0.0.170:3000/funcionarios/${profissionalId}`);
+        const funcionarioResponse = await axios.get(`http://${localMachineIp}:3000/funcionarios/${profissionalId}`);
         setProfissional(funcionarioResponse.data);
 
-        const funcionariosServicosResponse = await axios.get(`http:///10.0.0.170:3000/funcionarios_servicos?funcionario_id=${profissionalId}`);
+        const funcionariosServicosResponse = await axios.get(`http://${localMachineIp}:3000/funcionarios_servicos?funcionario_id=${profissionalId}`);
         const servicosIds = funcionariosServicosResponse.data.map(item => item.servico_id);
 
-        const servicosResponse = await axios.get(`http:///10.0.0.170:3000/servicos`);
+        const servicosResponse = await axios.get(`http://${localMachineIp}:3000/servicos`);
         const servicosDisponiveis = servicosResponse.data.filter(servico => servicosIds.includes(servico.id));
         setServicos(servicosDisponiveis);
 
