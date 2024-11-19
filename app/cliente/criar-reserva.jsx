@@ -58,7 +58,7 @@ const CriarReserva = () => {
         <>
           <Text style={styles.title}>Profissionais Disponíveis</Text>
           <FlatList
-            showsHorizontalScrollIndicator={false}  
+            showsHorizontalScrollIndicator={false}
             horizontal
             data={profissionais}
             keyExtractor={(item) => item.id}
