@@ -5,9 +5,9 @@ export class FuncionarioService{
         this.http = http
     }
 
-    async getAllFuncionariosByBarbeariaId(barbeariaId){
+    async getAllFuncionarios(){
         try{
-            const response = await this.http.get(`funcionario/${barbeariaId}`)
+            const response = await this.http.get(`funcionario/saloon`)
             return response;
         } catch (error) {
             if (error.response && error.response.status !== 200) {

@@ -1,11 +1,11 @@
 import axiosInstance from "../AxiosInstance";
 
-export class ReservaService {
+export class ServicoService {
     constructor(http = axiosInstance) {
         this.http = http
     }
 
-    async getServicosByFuncionarioId(fucionarioId){
+    async getServicosByFuncionarioId(funcionarioId){
         try{
             const response = await this.http.get(`servico/${funcionarioId}`)
             return response;
