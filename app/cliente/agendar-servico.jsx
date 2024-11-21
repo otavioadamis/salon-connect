@@ -24,10 +24,10 @@ const AgendarServico = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const servicos = await servicoService.getServicosByFuncionarioId("47d6be8d-c9e3-4bf4-b24a-83f6ee35e18e");
+        const servicos = await servicoService.getServicosByFuncionarioId(funcionarioId);
         setServicos(servicos.data);
 
-        const reservasOcupadas = await reservaService.getHorariosReservadosFromFuncionarioInDay("47d6be8d-c9e3-4bf4-b24a-83f6ee35e18e", "2022-02-16")
+        const reservasOcupadas = await reservaService.getHorariosReservadosFromFuncionarioInDay(funcionarioId, dataSelecionada)
         console.log(reservasOcupadas.data);
 
         const horariosDisponiveis = gerarHorariosDisponiveis(reservasOcupadas.data);
