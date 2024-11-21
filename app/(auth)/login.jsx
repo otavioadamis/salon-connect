@@ -64,7 +64,10 @@ const Login = () => {
                         value={senha}
                         onChangeText={setSenha}
                     />
-                    <TouchableOpacity style={styles.forgotPassword}>
+                     <TouchableOpacity
+                        style={styles.forgotPassword}
+                        onPress={() => router.push('/esquecisenha')}
+                    >
                         <Text style={styles.forgotText}>Esqueci Senha</Text>
                     </TouchableOpacity>
                     {error && <Text style={{ color: 'red' }}>{error}</Text>}

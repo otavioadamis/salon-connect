@@ -10,6 +10,7 @@ const Home = () => {
         <View className='space-y-5 ml-3'>
           <Link href="/login" className='font-bold'>login</Link>
           <Link href="/cadastro" className='font-bold'>cadastro</Link>
+          <Link href="/esquecisenha" className='font-bold'>EsqueciSenha</Link>
           <Link href="/EditarUsuario" className='font-bold'>EditarUsuario</Link>
           <Link href="/cliente/criar-reserva" className='font-bold'>Cria reserva</Link>
           <Link href="/home" className='font-bold'>Homepage</Link>

@@ -7,7 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ServicoService } from '../../services/api/ServicoService';
 import { ReservaService } from '../../services/api/ReservaService';
 
-
 const AgendarServico = () => {
   const servicoService = new ServicoService();
   const reservaService = new ReservaService();
