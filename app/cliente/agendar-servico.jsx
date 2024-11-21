@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import axios from 'axios';
+import { parse, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { localMachineIp } from '../../services/AxiosInstance'; 
+import { ServicoService } from '../../services/api/ServicoService';
+import { ReservaService } from '../../services/api/ReservaService';
 
 const AgendarServico = () => {
+  const servicoService = new ServicoService();
+  const reservaService = new ReservaService();
+
   const searchParams = useLocalSearchParams();
-  const { profissionalId, dataSelecionada } = searchParams;
-  const [horarios, setHorarios] = useState([]);
+  const { funcionarioId, funcionarioNome, dataSelecionada } = searchParams;
+
+  const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
+
   const [servicos, setServicos] = useState([]);
   const [selectedServico, setSelectedServico] = useState(null);
   const [profissional, setProfissional] = useState(null);
@@ -16,69 +23,81 @@ const AgendarServico = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const funcionarioResponse = await axios.get(`http://${localMachineIp}:3000/funcionarios/${profissionalId}`);
-        setProfissional(funcionarioResponse.data);
+        const servicos = await servicoService.getServicosByFuncionarioId(funcionarioId);
+        setServicos(servicos.data);
 
-        const funcionariosServicosResponse = await axios.get(`http://${localMachineIp}:3000/funcionarios_servicos?funcionario_id=${profissionalId}`);
-        const servicosIds = funcionariosServicosResponse.data.map(item => item.servico_id);
+        const reservasOcupadas = await reservaService.getHorariosReservadosFromFuncionarioInDay(funcionarioId, dataSelecionada)
+        console.log(reservasOcupadas.data);
 
-        const servicosResponse = await axios.get(`http://${localMachineIp}:3000/servicos`);
-        const servicosDisponiveis = servicosResponse.data.filter(servico => servicosIds.includes(servico.id));
-        setServicos(servicosDisponiveis);
+        const horariosDisponiveis = gerarHorariosDisponiveis(reservasOcupadas.data);
+        console.log(horariosDisponiveis)
+        
+        setHorariosDisponiveis(horariosDisponiveis);
 
-        const horariosDisponiveis = funcionarioResponse.data.horarios.filter(horario => horario.dia === dataSelecionada);
-        setHorarios(horariosDisponiveis);
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
     };
 
     fetchData();
-  }, [profissionalId, dataSelecionada]);
+  }, [funcionarioId, dataSelecionada]);
+
+  const gerarHorariosDisponiveis = (ocupados) => {
+    const horarios = [];
+    for (let hora = 8; hora < 18; hora++) {
+      if (hora === 12) continue;
+      horarios.push(`${hora}:00`);
+      horarios.push(`${hora}:22`);
+    }
+    const ocupadosFormatados = ocupados.map(item => {
+      const horario = item.diaHorario;
+      const date = parse(horario, "dd/MM/yyyy hh:mm:ss a", new Date());
+      return format(date, "HH:mm");
+    });
+    return horarios.filter(horario => !ocupadosFormatados.includes(horario));
+  };
+
+
 
   const confirmarAgendamento = (horario) => {
     if (selectedServico) {
-      alert(`Serviço agendado: ${selectedServico.nome} com ${profissional.nome} no dia ${dataSelecionada} às ${horario.hora_inicio}`);
+      alert(`Serviço agendado: ${selectedServico.nomeServico} com ${funcionarioNome} no dia ${dataSelecionada} às ${horario}`);
       router.back();
     } else {
       alert('Selecione um serviço antes de confirmar o agendamento.');
     }
   };
 
-  if (!profissional) {
-    return <Text>Carregando...</Text>;
-  }
-
   return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Agendar com {profissional.nome}</Text>
-        <Text style={styles.subtitle}>Data: {dataSelecionada}</Text>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Agendar com {funcionarioNome}</Text>
+      <Text style={styles.subtitle}>Data: {dataSelecionada}</Text>
 
-        <Text style={styles.subtitle}>Selecione um Serviço:</Text>
-        <FlatList
-          data={servicos}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.servicoItem} onPress={() => setSelectedServico(item)}>
-              <Text style={selectedServico?.id === item.id ? styles.servicoSelected : styles.servicoName}>
-                {item.nome} - R${item.preco}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
+      <Text style={styles.subtitle}>Selecione um Serviço:</Text>
+      <FlatList
+        data={servicos}
+        keyExtractor={(item) => item.servicoId.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity style={styles.servicoItem} onPress={() => setSelectedServico(item)}>
+            <Text style={selectedServico?.servicoId === item.servicoId ? styles.servicoSelected : styles.servicoName}>
+              {item.nomeServico} - R${item.precoServico}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
 
-        <Text style={styles.subtitle}>Horários Disponíveis:</Text>
-        <FlatList
-          data={horarios}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.horarioItem}>
-              <Text>{item.hora_inicio} - {item.hora_fim}</Text>
-              <Button title="Agendar" onPress={() => confirmarAgendamento(item)} />
-            </View>
-          )}
-        />
-      </SafeAreaView>
+      <Text style={styles.subtitle}>Horários Disponíveis:</Text>
+      <FlatList
+        data={horariosDisponiveis}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.horarioItem}>
+            <Text>{item}</Text>
+            <Button title="Agendar" onPress={() => confirmarAgendamento(item)} />
+          </View>
+        )}
+      />
+    </SafeAreaView>
   );
 };
 
