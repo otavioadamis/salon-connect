@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, FlatList, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import axios from 'axios';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FuncionarioService } from '../../services/api/FuncionarioService';
