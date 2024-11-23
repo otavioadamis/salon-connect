@@ -47,9 +47,9 @@ const TabsLayout = () => {
         />
 
         <Tabs.Screen
-          name="calendario"
+          name="criar-reserva"
           options={{
-            title: 'Calendario',
+            title: 'Agendar',
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
