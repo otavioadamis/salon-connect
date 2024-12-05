@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { UserService } from '../../services/api/UserService';
 
@@ -37,29 +37,30 @@ export default function Cadastro() {
     }
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.signupBox}>
-        <Text style={styles.title}>Cadastro</Text>
-        <Image
-        source={require('../../assets/logo.png')}
-        style={styles.logo}
-        resizeMode="contain"
-       />
-        <TextInput style={styles.input} placeholder="Nome" onChangeText={setNome} value={nome} />
-        <TextInput style={styles.input} placeholder="Email" onChangeText={setEmail} value={email} />
-        <TextInput style={styles.input} placeholder="Senha" secureTextEntry onChangeText={setSenha} value={senha} />
-        <TextInput style={styles.input} placeholder="Confirme sua senha" secureTextEntry />
-        <TextInput style={styles.input} placeholder="Contato" onChangeText={setContato} value={contato} keyboardType='numeric' />
-        {error && <Text style={{ color: 'red' }}>{error}</Text>}
-        <TouchableOpacity style={styles.signupButton} onPress={() => handleCadastro()}>
-          <Text style={styles.signupButtonText}>Cadastra-se</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.navigate('login')}>
-          <Text style={styles.loginText}>Voltar para Login</Text>
-        </TouchableOpacity>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.signupBox}>
+          <Text style={styles.title}>Cadastro</Text>
+          <Image
+            source={require('../../assets/logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <TextInput style={styles.input} placeholder="Nome" onChangeText={setNome} value={nome} />
+          <TextInput style={styles.input} placeholder="Email" onChangeText={setEmail} value={email} />
+          <TextInput style={styles.input} placeholder="Senha" secureTextEntry onChangeText={setSenha} value={senha} />
+          <TextInput style={styles.input} placeholder="Confirme sua senha" secureTextEntry />
+          <TextInput style={styles.input} placeholder="Contato" onChangeText={setContato} value={contato} keyboardType='numeric' />
+          {error && <Text style={{ color: 'red' }}>{error}</Text>}
+          <TouchableOpacity style={styles.signupButton} onPress={() => handleCadastro()}>
+            <Text style={styles.signupButtonText}>Cadastra-se</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.navigate('login')}>
+            <Text style={styles.loginText}>Voltar para Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      </View>
-
+    </ScrollView>
   );
 }
 
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     marginBottom: 20,
-},
+  },
   input: {
     width: '100%',
     height: 50,

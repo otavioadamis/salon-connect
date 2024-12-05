@@ -47,7 +47,7 @@ const AgendarServico = () => {
     for (let hora = 8; hora < 18; hora++) {
       if (hora === 12) continue;
       horarios.push(`${hora}:00`);
-      horarios.push(`${hora}:22`);
+      horarios.push(`${hora}:30`);
     }
     const ocupadosFormatados = ocupados.map(item => {
       const horario = item.diaHorario;
@@ -59,10 +59,24 @@ const AgendarServico = () => {
 
 
 
-  const confirmarAgendamento = (horario) => {
+  const confirmarAgendamento = async (horario) => {
     if (selectedServico) {
+      const diaHorario = parse(`${dataSelecionada} ${horario}`, 'yyyy-MM-dd HH:mm', new Date());
+      const formattedDate = format(diaHorario, 'dd/MM/yyyy hh:mm:ss a');
+      
+      const newReservaRequest = {
+        servicoId: selectedServico.servicoId,
+        funcionarioId: funcionarioId,
+        diaHorario: formattedDate
+      }
+
+      const response = await reservaService.postNewReserva(newReservaRequest);
+      console.log(response.data)
       alert(`Serviço agendado: ${selectedServico.nomeServico} com ${funcionarioNome} no dia ${dataSelecionada} às ${horario}`);
-      router.back();
+      router.push({
+        pathname: '/home',
+        params: { refresh: true },
+      });
     } else {
       alert('Selecione um serviço antes de confirmar o agendamento.');
     }

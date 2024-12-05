@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { UserService } from '../../services/api/UserService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -20,7 +21,8 @@ const Login = () => {
         try {
             const loginResponse = await userService.login(loginRequest);
             if (loginResponse) {
-                const { usuario } = loginResponse;
+                const { usuario, token } = loginResponse;
+                await AsyncStorage.setItem('jwtToken', token);
                 Alert.alert('Login bem-sucedido', `Bem-vindo, ${usuario.nome}`);
                 if (usuario.tipo === 'ROLE_CLIENTE') {
                     router.push('/home');
